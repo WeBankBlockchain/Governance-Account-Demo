@@ -2,7 +2,16 @@
 
 ## 使用步骤
 
+### 克隆代码
+```
+git clone https://github.com/WeBankBlockchain/Gov-Acct-Demo.git
+```
+
 ### 拷贝链证书
+
+```
+cd Gov-Acct-Demo
+```
 
 将SDK证书拷贝到项目的config目录下(这里假设SDK证书位于~/fisco/nodes/127.0.0.1/sdk目录)：
 ```
@@ -33,6 +42,17 @@ system.defaultGovernanceEnabled=true
 ./gradlew build
 ```
 
+后续，也可单独执行测试案例。
+```
+./gradlew test
+```
+
 ### DIY测试代码
 
+导入IDE中，支持导入IDEA或Eclipse中。
+
+
+
 修改src/test/java目录下的测试代码。
+
+
