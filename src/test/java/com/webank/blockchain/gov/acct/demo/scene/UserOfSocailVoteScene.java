@@ -122,13 +122,4 @@ public class UserOfSocailVoteScene extends GovAcctDemoApplicationTests {
         TransactionReceipt tr = endUserAdminManager.modifyManagerType(list);
         System.out.println(tr);
     }
-
-    // 添加一个社交好友
-    @Test
-    public void test3() throws Exception {
-        String accountAddressP1 = endUserAdminManager.createAccount(p1.getAddress());
-        TransactionReceipt tr = endUserAdminManager.addRelatedAccount(accountAddressP1);
-        System.out.println(tr);
-        // TransactionReceipt tr1 = endUserAdminManager.addRelatedAccount(u.getAddress());
-    }
 }
