@@ -9,8 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class GovAcctDemoApplicationTests {
-    @Autowired protected Client client;
-    @Autowired protected CryptoKeyPair credentials;
+    @Autowired
+    protected Client client;
+    @Autowired
+    protected CryptoKeyPair credentials;
 
     protected CryptoKeyPair u;
     protected CryptoKeyPair u1;
@@ -18,7 +20,6 @@ public class GovAcctDemoApplicationTests {
     protected CryptoKeyPair p1;
     protected CryptoKeyPair p2;
     protected CryptoKeyPair p3;
-
 
     @PostConstruct
     public void init() throws Exception {
@@ -29,6 +30,5 @@ public class GovAcctDemoApplicationTests {
         p2 = credentials.generateKeyPair();
         p3 = credentials.generateKeyPair();
     }
-    
-   
+
 }

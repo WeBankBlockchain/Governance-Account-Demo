@@ -16,7 +16,7 @@ public class GovAcctDemoBeanConfig {
     public GovernAccountInitializer getGovernAccountInitializer() {
         return new GovernAccountInitializer();
     }
-    
+
     @Bean
     public EndUserOperManager getEndUserOperManager() {
         return new EndUserOperManager();
@@ -31,11 +31,10 @@ public class GovAcctDemoBeanConfig {
     public AdminModeGovernManager getAdminModeGovernManager() {
         return new AdminModeGovernManager();
     }
-    
+
     @Bean
     public VoteModeGovernManager getVoteModeGovernManager() {
         return new VoteModeGovernManager();
     }
-    
 
 }

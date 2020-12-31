@@ -38,11 +38,16 @@ import com.webank.blockchain.gov.acct.service.BaseAccountService;
  * @data Feb 22, 2020 3:11:09 PM
  */
 public class UserOfGovernAdminScene extends GovAcctDemoApplicationTests {
-    @Autowired private GovernAccountInitializer governAdminManager;
-    @Autowired private AdminModeGovernManager adminModeManager;
-    @Autowired private AccountManager accountManager;
-    @Autowired private EndUserOperManager endUserAdminManager;
-    @Autowired private BaseAccountService baseAccountService;
+    @Autowired
+    private GovernAccountInitializer governAdminManager;
+    @Autowired
+    private AdminModeGovernManager adminModeManager;
+    @Autowired
+    private AccountManager accountManager;
+    @Autowired
+    private EndUserOperManager endUserAdminManager;
+    @Autowired
+    private BaseAccountService baseAccountService;
 
     // @Test
     // create govern account of admin by user, and set the address in application.properties
@@ -94,11 +99,8 @@ public class UserOfGovernAdminScene extends GovAcctDemoApplicationTests {
         endUserAdminManager.setCredentials(u1);
         tr = endUserAdminManager.modifyManagerType(voters);
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                UserStaticsEnum.SOCIAL.getStatics(),
-                UserAccount.load(accountManager.getUserAccount(u1.getAddress()), client, u1)
-                        ._statics()
-                        .intValue());
+        Assertions.assertEquals(UserStaticsEnum.SOCIAL.getStatics(),
+                UserAccount.load(accountManager.getUserAccount(u1.getAddress()), client, u1)._statics().intValue());
 
         // cancel
         tr = adminModeManager.cancelAccount(u1.getAddress());
