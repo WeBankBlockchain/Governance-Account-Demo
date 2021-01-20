@@ -1,10 +1,10 @@
-# Gov-Acct-Demo
+# Governance-Account-Demo
 
 ## 使用步骤
 
 ### 克隆代码
 ```
-git clone https://github.com/WeBankBlockchain/Gov-Acct-Demo.git
+git clone https://github.com/WeBankBlockchain/Governance-Account-Demo.git
 ```
 
 ### 拷贝链证书
