@@ -32,11 +32,16 @@ import com.webank.blockchain.gov.acct.service.BaseAccountService;
  * @data Feb 22, 2020 3:11:09 PM
  */
 public class GovernOfAdminModeScene extends GovAcctDemoApplicationTests {
-    @Autowired private GovernAccountInitializer manager;
-    @Autowired private AdminModeGovernManager adminModeManager;
-    @Autowired private AccountManager accountManager;
-    @Autowired private BaseAccountService baseAccountService;
-    @Autowired private WEGovernance govern;
+    @Autowired
+    private GovernAccountInitializer manager;
+    @Autowired
+    private AdminModeGovernManager adminModeManager;
+    @Autowired
+    private AccountManager accountManager;
+    @Autowired
+    private BaseAccountService baseAccountService;
+    @Autowired
+    private WEGovernance govern;
 
     // @Test
     // create govern account of admin by user, and set the address in application.properties

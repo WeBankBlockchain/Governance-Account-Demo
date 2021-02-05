@@ -29,7 +29,8 @@ import com.webank.blockchain.gov.acct.manager.GovernAccountInitializer;
  * @data Feb 21, 2020 8:49:25 PM
  */
 public class GovernAdminManagerTest extends GovAcctDemoApplicationTests {
-    @Autowired private GovernAccountInitializer manager;
+    @Autowired
+    private GovernAccountInitializer manager;
 
     @Test
     // create govern account of admin by user

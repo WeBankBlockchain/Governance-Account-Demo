@@ -39,9 +39,12 @@ import com.webank.blockchain.gov.acct.tool.JacksonUtils;
  * @data Feb 22, 2020 4:36:34 PM
  */
 public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
-    @Autowired private GovernAccountInitializer governAdminManager;
-    @Autowired private BaseAccountService baseAccountService;
-    @Autowired private VoteModeGovernManager voteModeGovernManager;
+    @Autowired
+    private GovernAccountInitializer governAdminManager;
+    @Autowired
+    private BaseAccountService baseAccountService;
+    @Autowired
+    private VoteModeGovernManager voteModeGovernManager;
 
     // @Test
     // create govern account of admin by user, and set the address in application.properties
@@ -84,11 +87,8 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         // set credential
         Assertions.assertEquals(1, govern._mode().intValue());
         voteModeGovernManager.changeCredentials(u);
-        BigInteger requestId =
-                voteModeGovernManager.requestResetAccount(p2.getAddress(), p1.getAddress());
-        System.out.println(
-                "vote info "
-                        + JacksonUtils.toJson(voteModeGovernManager.getVoteRequestInfo(requestId)));
+        BigInteger requestId = voteModeGovernManager.requestResetAccount(p2.getAddress(), p1.getAddress());
+        System.out.println("vote info " + JacksonUtils.toJson(voteModeGovernManager.getVoteRequestInfo(requestId)));
         voteModeGovernManager.vote(requestId, true);
         voteModeGovernManager.changeCredentials(u1);
         voteModeGovernManager.vote(requestId, true);
@@ -97,13 +97,8 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         Assertions.assertEquals("0x0", tr.getStatus());
         governanceU2.vote(requestId, true);
         Assertions.assertTrue(govern.passed(requestId));
-        Assertions.assertTrue(
-                govern.requestReady(
-                        requestId,
-                        BigInteger.valueOf(2),
-                        p1.getAddress(),
-                        p2.getAddress(),
-                        BigInteger.ZERO));
+        Assertions.assertTrue(govern.requestReady(requestId, BigInteger.valueOf(2), p1.getAddress(), p2.getAddress(),
+                BigInteger.ZERO));
         tr = voteModeGovernManager.resetAccount(requestId, p2.getAddress(), p1.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
         Assertions.assertTrue(!accountManager.hasAccount(p1.getAddress()));
@@ -116,8 +111,7 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         Assertions.assertTrue(govern.passed(requestId));
         tr = voteModeGovernManager.freezeAccount(requestId, p2.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                AccountStatusEnum.FROZEN.getStatus(), baseAccountService.getStatus(p1Address));
+        Assertions.assertEquals(AccountStatusEnum.FROZEN.getStatus(), baseAccountService.getStatus(p1Address));
 
         // unfreeze Account
         requestId = voteModeGovernManager.requestUnfreezeAccount(p2.getAddress());
@@ -126,8 +120,7 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         Assertions.assertTrue(govern.passed(requestId));
         tr = voteModeGovernManager.unfreezeAccount(requestId, p2.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                AccountStatusEnum.NORMAL.getStatus(), baseAccountService.getStatus(p1Address));
+        Assertions.assertEquals(AccountStatusEnum.NORMAL.getStatus(), baseAccountService.getStatus(p1Address));
 
         // cancel Account
         requestId = voteModeGovernManager.requestCancelAccount(p2.getAddress());
@@ -136,8 +129,7 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         Assertions.assertTrue(govern.passed(requestId));
         tr = voteModeGovernManager.cancelAccount(requestId, p2.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                AccountStatusEnum.CLOSED.getStatus(), baseAccountService.getStatus(p1Address));
+        Assertions.assertEquals(AccountStatusEnum.CLOSED.getStatus(), baseAccountService.getStatus(p1Address));
         Assertions.assertTrue(!accountManager.hasAccount(p2.getAddress()));
 
         // set Govern account threshold
@@ -153,20 +145,13 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         requestId = voteModeGovernManager.requestRemoveGovernAccount(u2.getAddress());
         governanceU1.vote(requestId, true);
         Assertions.assertTrue(govern.passed(requestId));
-        Assertions.assertTrue(
-                govern.requestReady(
-                        requestId,
-                        BigInteger.valueOf(11),
-                        u2.getAddress(),
-                        Address.DEFAULT.getValue(),
-                        BigInteger.ZERO));
+        Assertions.assertTrue(govern.requestReady(requestId, BigInteger.valueOf(11), u2.getAddress(),
+                Address.DEFAULT.getValue(), BigInteger.ZERO));
         tr = voteModeGovernManager.removeGovernAccount(requestId, u2.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                1, govern.getVoteWeight(accountManager.getUserAccount(u.getAddress())).intValue());
+        Assertions.assertEquals(1, govern.getVoteWeight(accountManager.getUserAccount(u.getAddress())).intValue());
 
-        Assertions.assertEquals(
-                0, govern.getVoteWeight(accountManager.getUserAccount(u2.getAddress())).intValue());
+        Assertions.assertEquals(0, govern.getVoteWeight(accountManager.getUserAccount(u2.getAddress())).intValue());
 
         // add govern account
         requestId = voteModeGovernManager.requestAddGovernAccount(u2.getAddress());
@@ -174,10 +159,8 @@ public class GovernOfNormalVoteScene extends GovAcctDemoApplicationTests {
         Assertions.assertTrue(govern.passed(requestId));
         tr = voteModeGovernManager.addGovernAccount(requestId, u2.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                1, govern.getVoteWeight(accountManager.getUserAccount(u.getAddress())).intValue());
+        Assertions.assertEquals(1, govern.getVoteWeight(accountManager.getUserAccount(u.getAddress())).intValue());
 
-        Assertions.assertEquals(
-                1, govern.getVoteWeight(accountManager.getUserAccount(u2.getAddress())).intValue());
+        Assertions.assertEquals(1, govern.getVoteWeight(accountManager.getUserAccount(u2.getAddress())).intValue());
     }
 }

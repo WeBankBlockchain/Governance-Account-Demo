@@ -33,5 +33,5 @@ public class CredentailTest extends GovAcctDemoApplicationTests {
         System.out.println(p1);
         Assert.notNull(p1.getAddress(), "credential must be not null");
     }
-    
+
 }

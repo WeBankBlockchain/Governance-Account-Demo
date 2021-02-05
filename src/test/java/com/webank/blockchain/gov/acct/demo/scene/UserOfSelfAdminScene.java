@@ -35,15 +35,18 @@ import com.webank.blockchain.gov.acct.service.BaseAccountService;
  * @data Feb 24, 2020 11:28:38 AM
  */
 public class UserOfSelfAdminScene extends GovAcctDemoApplicationTests {
-    @Autowired private EndUserOperManager endUserAdminManager;
-    @Autowired private WEGovernance governanceU;
-    @Autowired private AccountManager accountManagerU;
-    @Autowired private BaseAccountService baseAccountService;
+    @Autowired
+    private EndUserOperManager endUserAdminManager;
+    @Autowired
+    private WEGovernance governanceU;
+    @Autowired
+    private AccountManager accountManagerU;
+    @Autowired
+    private BaseAccountService baseAccountService;
 
     @Test
     public void test() throws Exception {
-        AccountManager accountManager =
-                AccountManager.load(accountManagerU.getContractAddress(), client, p1);
+        AccountManager accountManager = AccountManager.load(accountManagerU.getContractAddress(), client, p1);
         WEGovernance governance = WEGovernance.load(governanceU.getContractAddress(), client, p1);
         endUserAdminManager.setAccountManager(accountManager);
         endUserAdminManager.setGovernance(governance);
@@ -57,8 +60,7 @@ public class UserOfSelfAdminScene extends GovAcctDemoApplicationTests {
         Assertions.assertNotNull(accountAddress);
         System.out.println("p1: " + p1.getAddress());
         Assertions.assertTrue(accountManager.hasAccount(p1.getAddress()));
-        Assertions.assertEquals(
-                UserStaticsEnum.NONE.getStatics(), endUserAdminManager.getUserStatics());
+        Assertions.assertEquals(UserStaticsEnum.NONE.getStatics(), endUserAdminManager.getUserStatics());
         String p1AccountAddress = accountManager.getUserAccount(p1.getAddress());
         Assertions.assertEquals(accountAddress, p1AccountAddress);
 
@@ -98,16 +100,14 @@ public class UserOfSelfAdminScene extends GovAcctDemoApplicationTests {
         p1AccountAddress = accountManager.getUserAccount(p1.getAddress());
 
         // modify manager type
-        Assertions.assertEquals(
-                UserStaticsEnum.NONE.getStatics(), endUserAdminManager.getUserStatics());
+        Assertions.assertEquals(UserStaticsEnum.NONE.getStatics(), endUserAdminManager.getUserStatics());
         List<String> voters = Lists.newArrayList();
         voters.add(u.getAddress());
         voters.add(u1.getAddress());
         voters.add(u2.getAddress());
         tr = endUserAdminManager.modifyManagerType(voters);
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(
-                UserStaticsEnum.SOCIAL.getStatics(), endUserAdminManager.getUserStatics());
+        Assertions.assertEquals(UserStaticsEnum.SOCIAL.getStatics(), endUserAdminManager.getUserStatics());
 
         // cancel account
         tr = endUserAdminManager.cancelAccount();
