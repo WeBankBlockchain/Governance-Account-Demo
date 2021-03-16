@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.webank.blockchain.gov.acct.manager.AdminModeGovernManager;
 import com.webank.blockchain.gov.acct.manager.EndUserOperManager;
-import com.webank.blockchain.gov.acct.manager.GovernAccountInitializer;
+import com.webank.blockchain.gov.acct.manager.GovernContractInitializer;
 import com.webank.blockchain.gov.acct.manager.SocialVoteManager;
 import com.webank.blockchain.gov.acct.manager.VoteModeGovernManager;
 
@@ -13,8 +13,8 @@ import com.webank.blockchain.gov.acct.manager.VoteModeGovernManager;
 public class GovAcctDemoBeanConfig {
 
     @Bean
-    public GovernAccountInitializer getGovernAccountInitializer() {
-        return new GovernAccountInitializer();
+    public GovernContractInitializer getGovernContractInitializer() {
+        return new GovernContractInitializer();
     }
 
     @Bean
