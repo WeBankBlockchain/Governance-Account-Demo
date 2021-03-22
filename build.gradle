@@ -36,7 +36,8 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    implementation 'com.github.WeBankBlockchain:Governance-Account:dev-SNAPSHOT'
+    implementation 'com.github.WeBankBlockchain:Governance-Account:master-SNAPSHOT'
+    //implementation 'com.github.WeBankBlockchain:Governance-Account:dev-SNAPSHOT'
 }
 
 test {
