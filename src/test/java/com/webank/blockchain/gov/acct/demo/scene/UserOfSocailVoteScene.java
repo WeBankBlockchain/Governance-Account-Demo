@@ -1,7 +1,19 @@
+/**
+ * Copyright 2014-2019 the original author or authors.
+ *
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
+ *
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.webank.blockchain.gov.acct.demo.scene;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.fisco.bcos.sdk.model.TransactionReceipt;
@@ -9,104 +21,83 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.webank.blockchain.gov.acct.contract.AccountManager;
+import com.google.common.collect.Lists;
 import com.webank.blockchain.gov.acct.contract.UserAccount;
-import com.webank.blockchain.gov.acct.demo.GovAcctDemoApplicationTests;
+import com.webank.blockchain.gov.acct.contract.WEGovernance;
+import com.webank.blockchain.gov.acct.demo.BaseTests;
 import com.webank.blockchain.gov.acct.enums.RequestEnum;
 import com.webank.blockchain.gov.acct.enums.UserStaticsEnum;
 import com.webank.blockchain.gov.acct.manager.EndUserOperManager;
+import com.webank.blockchain.gov.acct.manager.GovernContractInitializer;
 import com.webank.blockchain.gov.acct.manager.SocialVoteManager;
 
 /**
- * UserOfSelfAdminScene @Description: UserOfSelfAdminScene
+ * UserOfSelfAdminScene @Description: 这是普通用户操作相关的样例 测试过程： 1. 创建治理合约和初始化endUserAdminManager
+ * 2.自助创建普通用户账户 3. 自助修改普通用户账户私钥重置方式 4. 发起社交好友重置私钥 5. 自助注销普通用户账户
  *
  * @author maojiayu
  * @data Feb 24, 2020 11:28:38 AM
  */
-public class UserOfSocailVoteScene extends GovAcctDemoApplicationTests {
-    @Autowired
-    private EndUserOperManager endUserAdminManager;
-    @Autowired
-    private AccountManager accountManager;
-    @Autowired
-    private SocialVoteManager socialVoteManager;
+public class UserOfSocailVoteScene extends BaseTests {
+    @Autowired private GovernContractInitializer gvernContractInitializer;
 
     @Test
     public void test() throws Exception {
 
-        // create account
-        String accountAddressP1 = endUserAdminManager.createAccount(p1.getAddress());
+        //  1. 创建治理合约
+        WEGovernance governance = gvernContractInitializer.createGovernAccount(endUser1Keypair);
+        // 初始化endUserAdminManager 和 socialVoteManager
+        EndUserOperManager endUserOperManager =
+                new EndUserOperManager(governance, client, endUser1Keypair);
+        SocialVoteManager socialVoteManager =
+                new SocialVoteManager(governance, client, endUser1Keypair);
+
+        // 2. 自助创建普通用户账户， end user 1,2&3
+        String accountAddressP1 = endUserOperManager.createAccount(endUser1Keypair.getAddress());
         Assertions.assertNotNull(accountAddressP1);
-        Assertions.assertTrue(accountManager.hasAccount(p1.getAddress()));
-        String accountAddressP2 = endUserAdminManager.createAccount(p2.getAddress());
+        Assertions.assertTrue(endUserOperManager.hasAccount(endUser1Keypair.getAddress()));
+        String accountAddressP2 = endUserOperManager.createAccount(endUser2Keypair.getAddress());
         Assertions.assertNotNull(accountAddressP2);
-        Assertions.assertTrue(accountManager.hasAccount(p2.getAddress()));
-        String accountAddressP3 = endUserAdminManager.createAccount(p3.getAddress());
+        Assertions.assertTrue(endUserOperManager.hasAccount(endUser2Keypair.getAddress()));
+        String accountAddressP3 = endUserOperManager.createAccount(endUser3Keypair.getAddress());
         Assertions.assertNotNull(accountAddressP3);
-        Assertions.assertTrue(accountManager.hasAccount(p3.getAddress()));
-        AccountManager accountManagerP1 = AccountManager.load(accountManager.getContractAddress(), client, p1);
-        List<String> list = new ArrayList<>();
-        list.add(accountAddressP1);
-        list.add(accountAddressP2);
-        list.add(accountAddressP3);
-        endUserAdminManager.setCredentials(p1);
+        Assertions.assertTrue(endUserOperManager.hasAccount(endUser3Keypair.getAddress()));
+
+        // 3. 自助修改普通用户账户私钥重置方式
+        // 注意：此处传入的是内部账户的地址，而非用户外部地址。
+        List<String> list =
+                Lists.newArrayList(accountAddressP1, accountAddressP2, accountAddressP3);
         // set account reset type
-        TransactionReceipt tr = endUserAdminManager.modifyManagerType(list);
+        TransactionReceipt tr = endUserOperManager.modifyManagerType(list);
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertEquals(UserStaticsEnum.SOCIAL.getStatics(), endUserAdminManager.getUserStatics());
-        socialVoteManager.changeCredentials(p1);
-        UserAccount userAccount = endUserAdminManager.getUserAccount(p1.getAddress());
-        TransactionReceipt tr1 = endUserAdminManager.removeRelatedAccount(accountAddressP1);
-        System.out.println(tr1);
-        // reset account
-        socialVoteManager.requestResetAccount(u1.getAddress(), p1.getAddress());
-        socialVoteManager.vote(p1.getAddress(), true);
+        Assertions.assertEquals(
+                UserStaticsEnum.SOCIAL.getStatics(), endUserOperManager.getUserStatics());
+        UserAccount userAccount = endUserOperManager.getUserAccount(endUser1Keypair.getAddress());
 
-        socialVoteManager.changeCredentials(p2);
-        socialVoteManager.vote(p1.getAddress(), true);
-        socialVoteManager.changeCredentials(p3);
-        socialVoteManager.vote(p1.getAddress(), false);
-        socialVoteManager.changeCredentials(p1);
-        Assertions.assertTrue(userAccount.passed(RequestEnum.OPER_CHANGE_CREDENTIAL.getType(), p1.getAddress(),
-                u1.getAddress(), BigInteger.ZERO));
-
-        tr = socialVoteManager.resetAccount(u1.getAddress(), p1.getAddress());
-        System.out.println(accountManagerP1.getContractAddress());
-        System.out.println(userAccount._accountManager());
+        // 4. 发起社交好友重置私钥
+        socialVoteManager.requestResetAccount(
+                governanceUser2Keypair.getAddress(), endUser1Keypair.getAddress());
+        socialVoteManager.changeCredentials(endUser2Keypair);
+        socialVoteManager.vote(endUser1Keypair.getAddress(), true);
+        socialVoteManager.changeCredentials(endUser3Keypair);
+        socialVoteManager.vote(endUser1Keypair.getAddress(), true);
+        socialVoteManager.changeCredentials(endUser1Keypair);
+        Assertions.assertTrue(
+                userAccount.passed(
+                        RequestEnum.OPER_CHANGE_CREDENTIAL.getType(),
+                        endUser1Keypair.getAddress(),
+                        governanceUser2Keypair.getAddress(),
+                        BigInteger.ZERO));
+        tr =
+                socialVoteManager.resetAccount(
+                        governanceUser2Keypair.getAddress(), endUser1Keypair.getAddress());
         Assertions.assertEquals("0x0", tr.getStatus());
-        Assertions.assertTrue(!accountManager.hasAccount(p1.getAddress()));
-        Assertions.assertTrue(accountManager.hasAccount(u1.getAddress()));
+        Assertions.assertTrue(!endUserOperManager.hasAccount(endUser1Keypair.getAddress()));
+        Assertions.assertTrue(endUserOperManager.hasAccount(governanceUser2Keypair.getAddress()));
         Assertions.assertTrue(!userAccount.passed(RequestEnum.OPER_CHANGE_CREDENTIAL.getType()));
 
-        // cancel
-        endUserAdminManager.changeCredentials(p2);
-        endUserAdminManager.cancelAccount();
-    }
-
-    @Test
-    public void test2() throws Exception {
-        // String accountAddressP1 = endUserAdminManager.createAccount(p1.getAddress());
-        // TransactionReceipt tr1 = endUserAdminManager.cancelAccount();
-        // System.out.println(tr1);
-        // TransactionReceipt tr = endUserAdminManager.resetAccount(p2.getAddress());
-        // System.out.println(tr);
-        String accountAddressP1 = endUserAdminManager.createAccount(p1.getAddress());
-        Assertions.assertNotNull(accountAddressP1);
-        Assertions.assertTrue(accountManager.hasAccount(p1.getAddress()));
-        String accountAddressP2 = endUserAdminManager.createAccount(p2.getAddress());
-        Assertions.assertNotNull(accountAddressP2);
-        Assertions.assertTrue(accountManager.hasAccount(p2.getAddress()));
-        String accountAddressP3 = endUserAdminManager.createAccount(p3.getAddress());
-        Assertions.assertNotNull(accountAddressP3);
-        Assertions.assertTrue(accountManager.hasAccount(p3.getAddress()));
-        AccountManager accountManagerP1 = AccountManager.load(accountManager.getContractAddress(), client, p1);
-        List<String> list = new ArrayList<>();
-        list.add(accountAddressP1);
-        list.add(accountAddressP2);
-        list.add(accountAddressP3);
-        endUserAdminManager.setCredentials(p1);
-        // set account reset type
-        TransactionReceipt tr = endUserAdminManager.modifyManagerType(list);
-        System.out.println(tr);
+        // 5. 自助注销普通用户账户
+        endUserOperManager.changeCredentials(endUser2Keypair);
+        endUserOperManager.cancelAccount();
     }
 }
